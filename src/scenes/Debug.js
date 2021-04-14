@@ -30,6 +30,8 @@ class Debug extends Phaser.Scene {
             this.add.rectangle(iconUnit * 9, iconUnit * i, iconUnit, iconUnit, sideArrayMod[i]).setOrigin(0,0);
         }
 
+        this.add.text(0, iconUnit * 10, "Seed: " + game.Seed);
+
         for (i = 1; i<=8; i++){
             for(var j = 1; j<=8; j++){
                 let key = i + ',' + j;
