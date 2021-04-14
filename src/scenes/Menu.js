@@ -43,7 +43,9 @@ class Menu extends Phaser.Scene {
             } 
 
             console.log(seed);
-            this.Maze = new Maze(seed);
+            game.Maze = new Maze(seed);
+
+            this.scene.start('debugScene');  
         }
     }
 }
