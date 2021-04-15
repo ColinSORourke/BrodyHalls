@@ -3,8 +3,8 @@ class Maze {
         this.dict = {};
 
         // Initilize every node
-        for (var i = 1; i <= 8; i++){
-            for (var j = 1; j <= 8; j++){
+        for (let i = 1; i <= 8; i++){
+            for (let j = 1; j <= 8; j++){
                 let key = i + ',' + j;
                 let north = i + ',' + (j-1);
                 let south = i + ',' + (j+1);
@@ -43,8 +43,8 @@ class Maze {
             }
         }
 
-        for (i = 1; i <= 8; i++){
-            for (j = 1; j <= 8; j++){
+        for (let i = 1; i <= 8; i++){
+            for (let j = 1; j <= 8; j++){
                 //top adjacent
                 seed = pseudoRandom(seed);
                 if ( seed % 2 == 1 ){
@@ -61,26 +61,33 @@ class Maze {
             }
         }
 
-        let unexplored = {};
+        let unexplored = JSON.parse(JSON.stringify(this.dict));
 
-        for (let key in this.dict) {
-            if (this.dict[key][1] == [true, true, true, true]){
-                let pathA = this.dict[key];
+        for (let key in unexplored) {
+            if (unexplored[key][1][0] && unexplored[key][1][1] && unexplored[key][1][2] && unexplored[key][1][3]){
+                console.log(key + ": split a four way")
+                let pathA = JSON.parse(JSON.stringify(unexplored[key]));
                 pathA[1] = [true, true, false, false];
-                let pathB = this.dict[key];
+                let pathB = JSON.parse(JSON.stringify(unexplored[key]));
                 pathB[1] = [false, false, true, true];
                 unexplored[key+'a'] = pathA;
                 unexplored[key+'b'] = pathB;
-            } else {
-                unexplored[key] =  this.dict[key];
+                unexplored[ unexplored[key][0][0] ][0][1] = key+'a';
+                unexplored[ unexplored[key][0][1] ][0][0] = key+'a';
+                unexplored[ unexplored[key][0][2] ][0][3] = key+'b';
+                unexplored[ unexplored[key][0][3] ][0][2] = key+'b';
+                delete unexplored[key];
+            } else if (!unexplored[key][1][0] && !unexplored[key][1][1] && !unexplored[key][1][2] && !unexplored[key][1][3]){
+                delete unexplored[key];
+                console.log(key + ": ignored an empty")
             }
         }
 
-        let disconnected = exploreMaze(unexplored, '1,1');
+        console.log(unexplored);
 
-        console.log(disconnected);
+        let components = exploreMaze(unexplored);
 
-        console.log(this.dict);
+        console.log(components);
 
         //connect them???
 
@@ -92,52 +99,42 @@ function pseudoRandom(seed){
     return (Math.pow(seed, 2) % 50515093);
 }
 
-function exploreMaze(unexplored, startingPoint){
+function exploreMaze(unexplored){
     let explored = [];
-    let toExplore = [startingPoint];
-    let fullMap = {...unexplored};
+    let fullMap = JSON.parse(JSON.stringify(unexplored));
+    let components = -1;
+
+    while (Object.keys(unexplored).length > 0) {
+        var keys = Object.keys(unexplored);
+        let key = keys[ keys.length * Math.random() << 0];
+
+        console.log("started a component at: " + key);
+        components += 1;
+        explored.push([]);
+
+        let toExplore = [key];
+        delete unexplored[key];
     
-    delete unexplored[ startingPoint ];
+        while (toExplore.length > 0){
 
-    while (toExplore.length > 0){
-
-        let currLoc = toExplore[0];
-        
-
-        for (var i = 0; i <= 3; i++){
-            // IF (there is a path) AND (that path leads somewhere we're not already planning to go) AND (that path leads somewhere we haven't already gone)
-            if (fullMap[currLoc][1][i] && !(toExplore.includes(fullMap[currLoc][0][i])) && !(explored.includes(fullMap[currLoc][0][i]))){
-                // We want to add that location to our explore list
-                // If it's not in Explored, toExplore, or Unexplored, that means it's one of the special nodes. (Or we fucked up)
-                if (!(fullMap[currLoc][0][i] in unexplored)){
-                    console.log("pathh was a four way");
-                    if(i <= 1){
-                        // If we're heading north or south, it's a special 'a' node.
-                        // Add it to our queue
-                        toExplore.push(fullMap[currLoc][0][i]+'a');
-                        // Remove from unexplored
-                        delete unexplored[ fullMap[currLoc][0][i]+'a' ];
-                    } else {
-                        // If we're heading east or west, it's a special 'b' node.
-                        // Add it to our queue
-                        toExplore.push(fullMap[currLoc][0][i]+'b');
-                        // Remove from unexplored
-                        delete unexplored[ fullMap[currLoc][0][i]+'b' ];
-                    }
-                } else {
+            let currLoc = toExplore[0];
+            for (var i = 0; i <= 3; i++){
+                // IF (there is a path) AND (that path leads somewhere we're not already planning to go) AND (that path leads somewhere we haven't already gone)
+                if (fullMap[currLoc][1][i] && !(toExplore.includes(fullMap[currLoc][0][i])) && !(explored[components].includes(fullMap[currLoc][0][i]))){
+                    // We want to add that location to our explore list
                     // Add new place to our queue
                     toExplore.push(fullMap[currLoc][0][i]);
                     // Remove from unexplored.
                     delete unexplored[ fullMap[currLoc][0][i] ];
-                }
-            } 
+                } 
+            }
+            // Add the node we just fully explored to our explored list.
+            explored[components].push(currLoc);
+            // And remove it from our queue
+            toExplore.shift();
         }
-        // Add the node we just fully explored to our explored list.
-        explored.push(currLoc);
-        // And remove it from our queue
-        toExplore.shift();
     }
     // Whatever is left in unexplored is NOT connected to the starting point.
-    return unexplored;
+    return explored;
 }
 
