@@ -91,7 +91,7 @@ class Maze {
                         else if (this.dict[northKey][2] == 3 && this.dict[northKey][3]){
                             // do nothing
                         } // If we just have too many four ways
-                        else if (numFourWays >= 6){
+                        else if (numFourWays >= 8){
                             // do nothing
                         } else {
                             this.dict[key][1][0] = true;
@@ -120,7 +120,7 @@ class Maze {
                             // Do nothing
                         } else if (this.dict[westKey][2] == 3 && this.dict[westKey][3]){
                             // Do nothing
-                        } else if (numFourWays >= 6){
+                        } else if (numFourWays >= 8){
                             // Do nothing
                         } else {
                             this.dict[key][1][3] = true;
@@ -145,49 +145,214 @@ class Maze {
 
 
         let unexplored = JSON.parse(JSON.stringify(this.dict));
+        let deadEnds = [];
         let numFours = 0;
-        let numEnds = 0;
         let numBlank = 0;
 
-        for (let key in unexplored) {
-            if (this.dict[key][2] == 4){
-                //console.log(key + ": split a four way")
-                let pathA = JSON.parse(JSON.stringify(unexplored[key]));
-                pathA[1] = [true, true, false, false];
-                let pathB = JSON.parse(JSON.stringify(unexplored[key]));
-                pathB[1] = [false, false, true, true];
-                unexplored[key+'a'] = pathA;
-                unexplored[key+'b'] = pathB;
-                unexplored[ unexplored[key][0][0] ][0][1] = key+'a';
-                unexplored[ unexplored[key][0][1] ][0][0] = key+'a';
-                unexplored[ unexplored[key][0][2] ][0][3] = key+'b';
-                unexplored[ unexplored[key][0][3] ][0][2] = key+'b';
-                numFours += 1;
-                delete unexplored[key];
-            } else if (this.dict[key][2] == 1){
-                numEnds += 1;
-            } else if (this.dict[key][2] == 0){
-                numBlank += 1;
-                delete unexplored[key];
-                //console.log(key + ": ignored an empty")
+
+        for (let i = 1; i <= 8; i++){
+            for (let j = 1; j <= 8; j++){
+                let key = i + ',' + j;
+                if (this.dict[key][2] == 4){
+                    //console.log(key + ": split a four way")
+                    let pathA = JSON.parse(JSON.stringify(unexplored[key]));
+                    pathA[1] = [true, true, false, false];
+                    let pathB = JSON.parse(JSON.stringify(unexplored[key]));
+                    pathB[1] = [false, false, true, true];
+                    unexplored[key+'a'] = pathA;
+                    unexplored[key+'b'] = pathB;
+                    unexplored[ unexplored[key][0][0] ][0][1] = key+'a';
+                    unexplored[ unexplored[key][0][1] ][0][0] = key+'a';
+                    unexplored[ unexplored[key][0][2] ][0][3] = key+'b';
+                    unexplored[ unexplored[key][0][3] ][0][2] = key+'b';
+                    numFours += 1;
+                    delete unexplored[key];
+                } else if (this.dict[key][2] == 1){
+                    deadEnds.push(key);
+                } else if (this.dict[key][2] == 0){
+                    numBlank += 1;
+                    delete unexplored[key];
+                    //console.log(key + ": ignored an empty")
+                }
             }
-        }
+        }            
+        
         //console.log("Generated unexplored, about to run exploreAlg");
         //console.log(unexplored);
 
         let components = exploreMaze(unexplored);
 
+        //console.log("Paths opened: " + openedPaths);
+        //console.log(components);
+
+        let largeComp = 0;
+        let largeCompInd = 0;
+
+        for (let i = 0; i< components.length; i++){
+            if (largeComp < components[i].length){
+                largeComp = components[i].length;
+                largeCompInd = i;
+            }
+        }
+
+        console.log(components);
+        
+        let unconnected = true;
+
+        // For every component
+        for (let i = 0; i< components.length; i++){
+            unconnected = true;
+            // If this component is NOT the main component
+            if (i != largeCompInd){
+                let thisComp = components[i];
+                // Go through every key in this componenet
+                for (let j = 0; j < thisComp.length; j++){
+                    let key = thisComp[j];
+                    // console.log(key);
+                    if ( key.length <= 3){
+                        // If this key is a dead end
+                        if ( this.dict[key][2] == 1 ) {
+                            // console.log("Attempting to connect dead end " + key + " to adjacent dead ends");
+                            // Go through all the directions of this tile
+                            let dirSwap = [1, 0, 3, 2];
+                            for (let k = 0; k < 4; k++){
+                                // If there is a dead end adjacent to this tile
+                                let adjKey = this.dict[key][0][k]
+                                if ( this.dict[adjKey][2] == 1 && components[largeCompInd].includes(adjKey)){
+                                    //console.log("Connected dead end " + key + " to dead end " + adjKey);
+                                    this.dict[key][1][k] = true;
+                                    this.updateWays(key);
+                                    this.dict[adjKey][1][dirSwap[k]] = true;
+                                    this.updateWays(adjKey);
+                                    openedPaths += 1;
+                                    if (unconnected) {
+                                        components[largeCompInd] = components[largeCompInd].concat(thisComp);
+                                    }
+                                    unconnected = false;
+                                } // Link Dead Ends
+                            }
+                            // If still unconnected
+                            if (unconnected){
+                                //console.log ("resorted to two way");
+                                for (let k = 0; k < 4; k++ ){
+                                    // If there is a 2 way path adjacent to this tile
+                                    let adjKey = this.dict[key][0][k]
+                                    if ( this.dict[adjKey][2] == 2 && components[largeCompInd].includes(adjKey)){
+                                        //console.log ("connected dead end " + key + " to two way " + adjKey);
+                                        this.dict[key][1][k] = true;
+                                        this.updateWays(key);
+                                        this.dict[adjKey][1][dirSwap[k]] = true;
+                                        this.updateWays(adjKey);
+                                        openedPaths += 1;
+                                        unconnected = false;
+                                        k = 4;
+                                        components[largeCompInd] = components[largeCompInd].concat(thisComp);
+                                    } // Link to that.
+                                }
+                            }
+                        }
+                        // if there were no dead ends in this component, connect it to something
+                        else if ( this.dict[key][2] == 2 && unconnected){
+                            //console.log("Attempting to connect 2 way " + key + " to adjacents");
+                            let dirSwap = [1, 0, 3, 2];
+                            for (let k = 0; k < 4; k++){
+                                // If there is a dead end adjacent to this tile
+                                let adjKey = this.dict[key][0][k]
+                                if ( this.dict[adjKey][2] <= 2 && components[largeCompInd].includes(adjKey)){
+                                    //console.log("connected 2 way " + key + " to " + adjKey);
+                                    this.dict[key][1][k] = true;
+                                    this.updateWays(key);
+                                    this.dict[adjKey][1][dirSwap[k]] = true;
+                                    this.updateWays(adjKey);
+                                    openedPaths += 1;
+                                    unconnected = false;
+                                    k = 4;
+                                    components[largeCompInd] = components[largeCompInd].concat(thisComp);
+                                }
+                            }
+                        } 
+                    }
+                    
+                }
+                if (unconnected){
+                    for (let j = 0; j < thisComp.length; j++){
+                        let key = thisComp[j];
+                        this.dict[key][1] = [false, false, false, false];
+                        this.dict[key][2] = 0;
+                    }
+                }
+            }
+        }
+
+        deadEnds = [];
+        numFours = 0;
+        numBlank = 0;
+
+        for (let i = 1; i <= 8; i++){
+            for (let j = 1; j <= 8; j++){
+                let key = i + ',' + j;
+                if (this.dict[key][2] == 4){
+                    numFours += 1;
+                } else if (this.dict[key][2] == 1){
+                    deadEnds.push(key);
+                } else if (this.dict[key][2] == 0){
+                    numBlank += 1;
+                }
+            }
+        }
+
         this.data.push(openedPaths);
         this.data.push(components.length);
         this.data.push(numFours);
-        this.data.push(numEnds);
+        this.data.push(deadEnds.length);
         this.data.push(numBlank);
-        //console.log("Paths opened: " + openedPaths);
-        console.log(components);
-
-        //connect them???
 
         //place important locations
+        
+
+        let specialRoles = ["RedStart", "RedEnd", "BlueStart", "BlueEnd", "GreenStart", "GreenEnd", "YellowStart", "YellowEnd", "PurpleStart", "PurpleEnd"];
+        let offlimits = [];
+
+        for (let i = 0; i < specialRoles.length; i++){
+            seed = pseudoRandom(seed);
+            let key = ( Math.floor(seed/8) % 8 + 1) + ',' + ( seed%8 + 1);
+            console.log(key);
+            if (this.dict[key][2] != 4 && this.dict[key][2] != 0 && this.dict[key][4] == "None" && !offlimits.includes(key)){
+                this.dict[key][4] = specialRoles[i];
+                offlimits = []
+                offlimits = offlimits.concat(this.dict[key][0]);
+                offlimits = offlimits.concat(this.dict[ this.dict[key][0][0] ][0]);
+                offlimits = offlimits.concat(this.dict[ this.dict[key][0][1] ][0]);
+                offlimits = offlimits.concat(this.dict[ this.dict[key][0][2] ][0]);
+                offlimits = offlimits.concat(this.dict[ this.dict[key][0][3] ][0]);
+            } else {
+                i -= 1;
+            }
+        }
+
+        seed = pseudoRandom(seed);
+        console.log(deadEnds);
+        let trapInd = seed % deadEnds.length;
+        let trapNode = deadEnds[trapInd];
+
+        
+
+        if (this.dict[trapNode][4] != "None"){
+            let otherTreasure = this.dict[trapNode][4]
+            while (this.dict[trapNode][4] == otherTreasure){
+                seed = pseudoRandom(seed);
+                let key = ( Math.floor(seed/8) % 8 + 1) + ',' + ( seed%8 + 1);
+                console.log(key);
+                if (this.dict[key][2] != 4 && this.dict[key][2] != 0 && this.dict[key][4] == "None"){
+                    this.dict[key][4] = otherTreasure;
+                    this.dict[trapNode][4] = "TrapRoom";
+                }
+            }
+        } else {
+            this.dict[trapNode][4] = "TrapRoom";
+        }
+
+
     }
 
     checkWays(boolList){
@@ -236,7 +401,7 @@ function exploreMaze(unexplored){
 
     while (Object.keys(unexplored).length > 0) {
         var keys = Object.keys(unexplored);
-        let key = keys[ keys.length * Math.random() << 0];
+        let key = keys[0];
 
         //console.log("started a component at: " + key);
         components += 1;
@@ -273,7 +438,7 @@ function pseudoRandomPathList(seed){
     let trueCount = 0;
     for (let i = 0; i <= 127; i++){
         seed = pseudoRandom(seed);
-        if (seed%2 == 1){
+        if (seed%100 >= 47){
             result.push(true);
             trueCount += 1;
         } else {
@@ -281,9 +446,19 @@ function pseudoRandomPathList(seed){
         }
     }
 
-    if (trueCount > 64) {
-        return result;
-    } else {
-        return pseudoRandomPathList(seed);
+    while (trueCount < 64) {
+        let removed = result.shift();
+        if (removed){
+            trueCount -= 1;
+        }
+
+        seed = pseudoRandom(seed);
+        if (seed%100 >= 47){
+            result.push(true);
+            trueCount += 1;
+        } else {
+            result.push(false);
+        }
     }
+    return result;
 }

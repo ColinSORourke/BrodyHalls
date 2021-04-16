@@ -35,13 +35,9 @@ class Debug extends Phaser.Scene {
         for (i = 1; i<=8; i++){
             for(var j = 1; j<=8; j++){
                 let key = i + ',' + j;
-                let numPath = 0;
-                let paths = game.Maze['dict'][key][1]
-                paths.forEach(element => {
-                    if (element){
-                        numPath += 1;
-                    }
-                });
+                let numPath = game.Maze['dict'][key][2];
+                let paths = game.Maze['dict'][key][1];
+                let role = game.Maze['dict'][key][4];
                 if (numPath == 4){
                     let spot = this.add.sprite(iconUnit * i+32, iconUnit*j+32, 'fourway').setOrigin(0.5,0.5);
                     spot.setScale(0.5);
@@ -82,6 +78,43 @@ class Debug extends Phaser.Scene {
                         }
                     }
                 }
+                switch (role){
+                    case "RedStart": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0xDB4C40).setOrigin(0.5,0.5);
+                        break;
+                    case "RedEnd": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0xDB4C40).setOrigin(0.5,0.5);
+                        break;
+                    case "BlueStart": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0x90BEDE).setOrigin(0.5,0.5);
+                        break;
+                    case "BlueEnd": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0x90BEDE).setOrigin(0.5,0.5);
+                        break;
+                    case "YellowStart": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0xF0EC57).setOrigin(0.5,0.5);
+                        break;
+                    case "YellowEnd": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0xF0EC57).setOrigin(0.5,0.5);
+                        break;
+                    case "GreenStart": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0x143109).setOrigin(0.5,0.5);
+                        break;
+                    case "GreenEnd": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0x143109).setOrigin(0.5,0.5);
+                        break;
+                    case "PurpleStart": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0x77567A).setOrigin(0.5,0.5);
+                        break;
+                    case "PurpleEnd": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0x77567A).setOrigin(0.5,0.5);
+                        break;
+                    case "TrapRoom": 
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0x816F68).setOrigin(0.5,0.5);
+                        break;
+                }
+
+
             }
         }
     }
