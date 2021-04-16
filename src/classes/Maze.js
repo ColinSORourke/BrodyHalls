@@ -146,9 +146,11 @@ class Maze {
 
         let unexplored = JSON.parse(JSON.stringify(this.dict));
         let numFours = 0;
+        let numEnds = 0;
+        let numBlank = 0;
 
         for (let key in unexplored) {
-            if (this.checkWays(this.dict[key][1]) == 4){
+            if (this.dict[key][2] == 4){
                 //console.log(key + ": split a four way")
                 let pathA = JSON.parse(JSON.stringify(unexplored[key]));
                 pathA[1] = [true, true, false, false];
@@ -162,7 +164,10 @@ class Maze {
                 unexplored[ unexplored[key][0][3] ][0][2] = key+'b';
                 numFours += 1;
                 delete unexplored[key];
-            } else if (this.checkWays(this.dict[key][1]) == 0){
+            } else if (this.dict[key][2] == 1){
+                numEnds += 1;
+            } else if (this.dict[key][2] == 0){
+                numBlank += 1;
                 delete unexplored[key];
                 //console.log(key + ": ignored an empty")
             }
@@ -175,6 +180,8 @@ class Maze {
         this.data.push(openedPaths);
         this.data.push(components.length);
         this.data.push(numFours);
+        this.data.push(numEnds);
+        this.data.push(numBlank);
         //console.log("Paths opened: " + openedPaths);
         console.log(components);
 

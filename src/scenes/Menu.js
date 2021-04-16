@@ -65,6 +65,8 @@ class Menu extends Phaser.Scene {
         this.add.rectangle(game.config.width/2 + 60, game.config.height - 240, 3, 240, 0x58BC82).setOrigin(0,0);
 
         let compsDict = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0};
+        let averageEnds = 0;
+        let averageBlank = 0;
         for (var i = 0; i<= 200; i++){
             let seed = this.generateSeed();
 
@@ -77,11 +79,22 @@ class Menu extends Phaser.Scene {
             
             compsDict[game.Maze.data[2]] += 1;
 
+            averageEnds += game.Maze.data[4];
+            averageBlank += game.Maze.data[5];
+
             let x = game.Maze.data[1] - 64;
             let y = game.Maze.data[2];
             this.add.rectangle(game.config.width/2 - 120 + x * 10, game.config.height - y*20, 8, 8, colors[game.Maze.data[3]/2]);
         }
+
+        averageEnds = averageEnds / 200.0;
+        averageBlank = averageBlank / 200.0;
+
+
+
         console.log(compsDict);
+        console.log("Average Ends: " + averageEnds);
+        console.log("Average Blanks: " + averageBlank);
     }
 
     // Generates a random seed for Blum Blum Shub
