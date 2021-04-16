@@ -24,7 +24,7 @@ class Menu extends Phaser.Scene {
         }
 
         // CREATE MENU... JESUS WEPT        
-        this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, '37004394', menuConfig).setOrigin(0.5);
+        this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, '11071580', menuConfig).setOrigin(0.5);
 
         let genSeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding + 64, 'Generate Seed', menuConfig).setOrigin(0.5);
         genSeed.setInteractive();
@@ -89,7 +89,7 @@ class Menu extends Phaser.Scene {
         let seed = Math.floor(Math.random() * 50515091) + 2;
             
         while (seed % 5807 == 0 || seed % 8699 == 0){
-            game.seed = Math.floor(Math.random() * (game.config.mathM - 2)) + 2;
+            seed = Math.floor(Math.random() * (game.config.mathM - 2)) + 2;
         }
         //console.log(seed);
         game.Seed = seed;
