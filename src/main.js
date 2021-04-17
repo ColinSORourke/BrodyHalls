@@ -2,7 +2,7 @@ let config = {
     type: Phaser.CANVAS,
     width: 1000,
     height: 750,
-    scene: [Menu, Debug],
+    scene: [Menu, Debug, Play],
     // Pseudorandom Important Values
     mathM: 50515093,
     mathP: 5807,
