@@ -15,9 +15,9 @@ class Brody extends Phaser.GameObjects.Sprite {
         if (Math.abs(this.angle) == 5){
             this.angle = this.nextAngle.shift();
             if (this.angle == 0){
-                this.y -= 10;
+                this.y -= 15;
             } else {
-                this.y += 10;
+                this.y += 15;
             }
             if (this.nextAngle.length == 0){
                 this.nextAngle.push(0);
@@ -28,9 +28,9 @@ class Brody extends Phaser.GameObjects.Sprite {
             this.beatCount = Math.floor((time + 15) * (47/15000));
             this.angle = (this.angle + this.nextAngle[0])/2;
             if (this.nextAngle[0] == 0){
-                this.y -= 10;
+                this.y -= 15;
             } else {
-                this.y += 10;
+                this.y += 15;
             }
         }
     }
