@@ -54,6 +54,10 @@ class Play extends Phaser.Scene {
         this.currScale = 1;
         this.background.setScale(this.currScale);
       }
+      if (this.currScale > this.verticalBounds[1] && !this.viablePaths[0]){
+        this.currScale = this.verticalBounds[1];
+        this.background.setScale(this.currScale);
+      }
 
       if(keyLEFT.isDown 
         && ((this.Brody.x >= this.Brody.width * 0.6) 
@@ -74,7 +78,7 @@ class Play extends Phaser.Scene {
       else if (keyUP.isDown){
         if (this.Brody.y > game.config.height * 1.15){
           this.Brody.y -= this.Brody.moveSpeed;
-        } else if ((this.currScale <= this.verticalBounds[1]) || ( this.viablePaths[0] && this.Brody.x > this.horizontalBounds[0] && this.Brody.x < this.horizontalBounds[1]) ) {
+        } else if ((this.currScale < this.verticalBounds[1]) || ( this.viablePaths[0] && this.Brody.x > this.horizontalBounds[0] && this.Brody.x < this.horizontalBounds[1]) ) {
           this.currScale = this.currScale * 1.02;
           this.background.setScale(this.currScale);
         }
@@ -84,7 +88,7 @@ class Play extends Phaser.Scene {
         if ( (this.currScale > this.verticalBounds[0]) || (this.viablePaths[1] && this.currScale > 1 && this.Brody.x > this.horizontalBounds[0] && this.Brody.x < this.horizontalBounds[1]) ){
           this.currScale = this.currScale * 50/51;
           this.background.setScale(this.currScale);
-        } else if (this.viablePaths[1]){
+        } else if (this.viablePaths[1] && this.currScale == 1){
           this.Brody.y += 1.5 * this.Brody.moveSpeed;
         }
       }
@@ -205,7 +209,7 @@ class Play extends Phaser.Scene {
         } else if (pathArr[1] && pathArr[2]){
           this.background.flipX = true;
           this.background.setFrame(5);
-          this.verticalBounds = [2.5, 3.5, 3.75];
+          this.verticalBounds = [2.5, 3.5, 5];
           this.horizontalBounds = [this.Brody.width * 0.6, game.config.width - this.Brody.width * 0.6]
           if (direction == 2){
             this.currScale = 2.75;
@@ -217,7 +221,7 @@ class Play extends Phaser.Scene {
         } else if (pathArr[1] && pathArr[3]){
           this.background.flipX = false;
           this.background.setFrame(5);
-          this.verticalBounds = [2.5, 3.5, 3.75];
+          this.verticalBounds = [2.5, 3.5, 5];
           this.horizontalBounds = [this.Brody.width * 0.6, game.config.width - this.Brody.width * 0.6]
           if (direction == 3){
             this.currScale = 2.75;
@@ -234,7 +238,7 @@ class Play extends Phaser.Scene {
         if (!pathArr[0]){
           this.background.flipX = false;
           this.background.setFrame(7);
-          this.verticalBounds = [2.5, 3.5, 3.5];
+          this.verticalBounds = [2.5, 3.5, 5];
           this.horizontalBounds = [this.Brody.width * 0.6, game.config.width - this.Brody.width * 0.6]
           if (direction == 1){
             this.currScale = 1;
