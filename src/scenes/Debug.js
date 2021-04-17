@@ -79,6 +79,9 @@ class Debug extends Phaser.Scene {
                     }
                 }
                 switch (role){
+                    case "StartingRoom":
+                        this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0xFFFFFF).setOrigin(0.5,0.5);
+                        break;
                     case "RedStart": 
                         this.add.rectangle(iconUnit * i + 32, iconUnit*j + 32, 16, 16, 0xDB4C40).setOrigin(0.5,0.5);
                         break;

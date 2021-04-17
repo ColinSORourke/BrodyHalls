@@ -360,6 +360,19 @@ class Maze {
                 i -= 1;
             }
         }
+        
+        let placedStart = false;
+
+        while (!placedStart){
+            seed = pseudoRandom(seed);
+            let key = ( Math.floor(seed/8) % 8 + 1) + ',' + ( seed%8 + 1);
+
+            if (this.dict[key][2] != 4 && this.dict[key][2] != 0 && this.dict[key][4] == "None" && this.dict[key][2] != 1 && !offlimits.includes(key) ){
+                this.dict[key][4] = "StartingRoom";
+                this.start = key;
+                placedStart = true;
+            }
+        }
 
         // Then we also want to place the trap room, which is limited to dead ends.
         // Select a random DeadEnd key
