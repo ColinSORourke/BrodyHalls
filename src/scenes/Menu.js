@@ -24,7 +24,7 @@ class Menu extends Phaser.Scene {
         }
 
         // CREATE MENU... JESUS WEPT        
-        this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, '33133135', menuConfig).setOrigin(0.5);
+        this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'No Seed Yet', menuConfig).setOrigin(0.5);
         // 16726498
         // 32957304
 
@@ -52,8 +52,6 @@ class Menu extends Phaser.Scene {
 
     startDebugScene(){
         // this.generateData();
-
-
         if (this.displaySeed.text != 'No Seed Yet'){
             let seed = this.displaySeed.text;
             game.Maze = new Maze(seed);

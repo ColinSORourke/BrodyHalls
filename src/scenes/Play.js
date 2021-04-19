@@ -24,7 +24,7 @@ class Play extends Phaser.Scene {
 
         
 
-        this.background = this.add.sprite (game.config.width/2, game.config.height/2, 'Rooms').setOrigin(0.5, 0.5);
+        this.background = this.add.sprite(game.config.width/2, game.config.height/2, 'Rooms').setOrigin(0.5, 0.5);
         
 
         this.Brody = new Brody(this, game.config.width/2, game.config.height * 1.15, 'Brody').setOrigin(this.spawnPoint, 1.1);

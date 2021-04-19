@@ -222,7 +222,7 @@ class Maze {
             // If this component is NOT the main component
             if (i != largeCompInd){
                 let thisComp = components[i];
-                // Go through every key in this componenet
+                // Go through every key in this component
                 for (let j = 0; j < thisComp.length; j++){
                     let key = thisComp[j];
                     // If this is a four way, don't bother.
