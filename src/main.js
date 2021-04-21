@@ -1,5 +1,5 @@
 let config = {
-    type: Phaser.CANVAS,
+    type: Phaser.WEBGL,
     width: 1000,
     height: 750,
     scene: [Menu, Debug, Play],

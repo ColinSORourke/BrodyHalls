@@ -105,7 +105,6 @@ class Play extends Phaser.Scene {
         this.pickRoom(this.currLoc, 3);
         this.Brody.x = 0;
       }
-
       if (this.Brody.y >= (game.config.height * 1.15 + this.Brody.height)){
         let weirdEnd = ( game.Maze.dict[this.currLoc][1][0] && !this.viablePaths[0] )
         this.currLoc = game.Maze.dict[this.currLoc][0][1];
@@ -118,7 +117,6 @@ class Play extends Phaser.Scene {
         
         this.Brody.y = game.config.height * 1.15;
       }
-
       if (this.currScale >= this.verticalBounds[2]){
         this.currLoc = game.Maze.dict[this.currLoc][0][0];
         console.log(this.currLoc);
@@ -129,6 +127,8 @@ class Play extends Phaser.Scene {
 
     pickRoom(key, direction = 0){
       let pathArr = game.Maze.dict[key][1];
+
+      this.Brody.clearTint();
 
       let pathCount = 0;
       for (let i = 0; i < 4; i++){
@@ -144,6 +144,8 @@ class Play extends Phaser.Scene {
           this.background.setFrame(2);
           this.viablePaths = [false, true, false, false];
           if (pathArr[0]){
+            this.Brody.setTint(0x000000);
+            this.Brody.flipX = !this.Brody.flipX;
             game.Maze.dict[key][0][1] = game.Maze.dict[key][0][0]
           }
         } else if (pathArr[2]){
