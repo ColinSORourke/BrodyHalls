@@ -24,7 +24,7 @@ class Menu extends Phaser.Scene {
         }
 
         // CREATE MENU... JESUS WEPT        
-        this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'No Seed Yet', menuConfig).setOrigin(0.5);
+        this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, '2455590', menuConfig).setOrigin(0.5);
         // 16726498
         // 32957304
 

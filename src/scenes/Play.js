@@ -13,6 +13,8 @@ class Play extends Phaser.Scene {
         this.load.image('deadend', './assets/DeadEnd.png');
         this.load.image('line', './assets/Line.png');
         this.load.image('trap', './assets/TrapRoom.png');
+        this.load.image('Starfish', './assets/Starfish.png');
+        this.load.image('StarLoc', './assets/StarLoc.png');
     }
 
     create() {
@@ -22,10 +24,7 @@ class Play extends Phaser.Scene {
         this.spawnPoint = 0.5
         this.currScale = 1;
 
-        
-
         this.background = this.add.sprite(game.config.width/2, game.config.height/2, 'Rooms').setOrigin(0.5, 0.5);
-        
 
         this.Brody = new Brody(this, game.config.width/2, game.config.height * 1.15, 'Brody').setOrigin(this.spawnPoint, 1.1);
         this.sound.play('BrodyQuest');
@@ -33,8 +32,22 @@ class Play extends Phaser.Scene {
         this.verticalBounds = [1, 1, 1];
         this.horizontalBounds = [this.Brody.width * 0.6, game.config.width - this.Brody.width * 0.6]
 
+        // Red, Blue, Green, Yellow, Purple
+        this.filled = [false, false, false, false, true];
+        this.filledStar = this.add.sprite(game.config.width/2, 0, 'Starfish').setOrigin(0.5, 0);
+
+        //this.following = this.add.sprite(game.config.width/2, game.config.height, 'Starfish').setOrigin(0.5, 0.5);
+        //this.following.bounce = 0;
+
+        this.inRoom = this.add.sprite(game.config.width/2, game.config.height, 'Starfish').setOrigin(0.5, 0.5);
+        this.inRoom.bounce = 0;
+        //this.inRoom.visible = false;
+
+        this.dropOff = this.add.sprite(game.config.width/2, 0, 'StarLoc').setOrigin(0.5, 0);
+
         this.pickRoom(this.currLoc);
 
+        
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -44,6 +57,13 @@ class Play extends Phaser.Scene {
 
     update(time, delta) {
       this.Brody.update(time, delta);
+      if (this.following){
+        this.orbit(this.following);
+      }
+
+      if (this.inRoom.visible){
+        this.bounce(this.inRoom);
+      }
 
       if (Phaser.Input.Keyboard.JustDown(keySPACE)){
         console.log("Brody's X: " + this.Brody.x + "   CurrScale: " + this.currScale + "   ScaleBounds: " + this.verticalBounds);
@@ -126,6 +146,25 @@ class Play extends Phaser.Scene {
     }
 
     pickRoom(key, direction = 0){
+
+      if (game.Maze.dict[key][4] == "TrapRoom"){
+        let placedStart = false;
+
+        while (!placedStart){
+            let seed = Math.floor(Math.random() * 64);
+            let newKey = ( Math.floor(seed/8) + 1) + ',' + ( seed%8 + 1);
+
+            if (game.Maze.dict[newKey][2] != 4 && game.Maze.dict[newKey][2] != 0 && game.Maze.dict[newKey][4] == "None" && game.Maze.dict[newKey][2] != 1){
+                console.log(newKey);
+                this.currLoc = newKey;
+                key = newKey;
+                direction = 0;
+                placedStart = true;
+                this.Brody.x = game.config.width/2;
+            }
+        }
+      }
+
       let pathArr = game.Maze.dict[key][1];
 
       this.Brody.clearTint();
@@ -323,6 +362,73 @@ class Play extends Phaser.Scene {
           this.background.setScale(this.currScale);
         }
       }
+
+      console.log(game.Maze.dict[key][4]);
+      this.inRoom.visible = false;
+      this.dropOff.visible = false;
+      this.filledStar.visible = false;
+      switch (game.Maze.dict[key][4]){
+        case "RedStart":
+          this.inRoom.visible = true;
+          this.inRoom.setTint(0xDB4C40);
+          break;
+        case "BlueStart":
+          this.inRoom.visible = true;
+          this.inRoom.setTint(0x90BEDE);
+          break;
+        case "GreenStart":
+          this.inRoom.visible = true;
+          this.inRoom.setTint(0x143109);
+          break;
+        case "YellowStart":
+          this.inRoom.visible = true;
+          this.inRoom.setTint(0xF0EC57);
+          break;
+        case "PurpleStart":
+          this.inRoom.visible = true;
+          this.inRoom.setTint(0x77567A);
+          break;
+        case "RedEnd":
+          this.dropOff.visible = true;
+          this.dropOff.setTint(0xDB4C40);
+          if (this.filledStar[0]){
+            this.filledStar.visible = true;
+            this.filledStar.setTint(0xDB4C40);
+          }
+          break;
+        case "BlueEnd":
+          this.dropOff.visible = true;
+          this.dropOff.setTint(0x90BEDE);
+          if (this.filled[1]){
+            this.filledStar.visible = true;
+            this.filledStar.setTint(0x90BEDE);
+          }
+          break;
+        case "GreenEnd":
+          this.dropOff.visible = true;
+          this.dropOff.setTint(0x143109);
+          if (this.filled[2]){
+            this.filledStar.visible = true;
+            this.filledStar.setTint(0x143109);
+          }
+          break;
+        case "YellowEnd":
+          this.dropOff.visible = true;
+          this.dropOff.setTint(0xF0EC57);
+          if (this.filled[3]){
+            this.filledStar.visible = true;
+            this.filledStar.setTint(0xF0EC57);
+          }
+          break;
+        case "PurpleEnd":
+          this.dropOff.visible = true;
+          this.dropOff.setTint(0x77567A);
+          if (this.filled[4]){
+            this.filledStar.visible = true;
+            this.filledStar.setTint(0x77567A);
+          }
+          break;
+      }
     }
 
     addIcon(paths, direction = 0){
@@ -375,5 +481,18 @@ class Play extends Phaser.Scene {
               }
           }
       }
+    }
+
+    orbit(sprite){
+      sprite.y = this.Brody.y - this.Brody.height + (game.config.height*0.25 * Math.sin(sprite.bounce));
+      sprite.x = this.Brody.x + (game.config.width*0.25 * Math.sin(sprite.bounce + Math.PI/2));
+      sprite.angle += 2;
+      sprite.bounce += 0.04;
+    }
+
+    bounce(sprite){
+      sprite.y = game.config.height * 0.8 + (game.config.height*0.3 * Math.sin(sprite.bounce));
+      sprite.bounce += 0.04;
+      sprite.angle += 2;
     }
 }
