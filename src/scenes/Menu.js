@@ -27,8 +27,19 @@ class Menu extends Phaser.Scene {
         this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, '2455590', menuConfig).setOrigin(0.5);
         // 16726498
         // 32957304
+        this.currSeed = "";
 
-
+        key1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        key0 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ZERO);
+        key2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+        key3 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
+        key4 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR);
+        key5 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE);
+        key6 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SIX);
+        key7 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SEVEN);
+        key8 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.EIGHT);
+        key9 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NINE);
+        keyDEL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
 
         let genSeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding + 64, 'Generate Seed', menuConfig).setOrigin(0.5);
         genSeed.setInteractive();
@@ -48,6 +59,50 @@ class Menu extends Phaser.Scene {
     }
 
     update() {
+        if (Phaser.Input.Keyboard.JustDown(key0) && this.currSeed.length >= 1 && this.currSeed.length < 8){
+            this.currSeed += "0";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key1) && this.currSeed.length < 8){
+            this.currSeed += "1";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key2) && this.currSeed.length < 8){
+            this.currSeed += "2";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key3) && this.currSeed.length < 8){
+            this.currSeed += "3";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key4) && this.currSeed.length < 8){
+            this.currSeed += "4";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key5) && this.currSeed.length < 8){
+            this.currSeed += "5";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key6) && this.currSeed.length < 8){
+            this.currSeed += "6";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key7) && this.currSeed.length < 8){
+            this.currSeed += "7";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key8) && this.currSeed.length < 8){
+            this.currSeed += "8";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(key9) && this.currSeed.length < 8){
+            this.currSeed += "9";
+            this.displaySeed.text = this.currSeed;
+        }
+        if (Phaser.Input.Keyboard.JustDown(keyDEL)){
+            this.currSeed = "";
+            this.displaySeed.text = "No Seed Yet";
+        }
     }  
 
     startDebugScene(){
@@ -56,7 +111,7 @@ class Menu extends Phaser.Scene {
             let seed = this.displaySeed.text;
             game.Maze = new Maze(seed);
             console.log(game.Maze.data);
-            this.scene.start('playScene');
+            this.scene.start('debugScene');
         }
     }
 

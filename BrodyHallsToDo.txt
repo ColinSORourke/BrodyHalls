@@ -1,6 +1,6 @@
-* Implement Objects in the rooms.
-    * Orbs follow Brody akin to starfish
-* Implement Trap room
+* Implement Objects in the rooms - DONE
+    * Orbs follow Brody akin to starfish - NEARLY DONE
+* Implement Trap room - DONE
 * Implement South Dead End Shading - DONE
 * Improve Room Graphics
 * Dynamic Soundtrack

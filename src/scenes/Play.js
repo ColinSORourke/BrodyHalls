@@ -27,23 +27,24 @@ class Play extends Phaser.Scene {
         this.background = this.add.sprite(game.config.width/2, game.config.height/2, 'Rooms').setOrigin(0.5, 0.5);
 
         this.Brody = new Brody(this, game.config.width/2, game.config.height * 1.15, 'Brody').setOrigin(this.spawnPoint, 1.1);
-        this.sound.play('BrodyQuest');
+        //this.sound.play('BrodyQuest');
 
         this.verticalBounds = [1, 1, 1];
         this.horizontalBounds = [this.Brody.width * 0.6, game.config.width - this.Brody.width * 0.6]
 
         // Red, Blue, Green, Yellow, Purple
-        this.filled = [false, false, false, false, true];
-        this.filledStar = this.add.sprite(game.config.width/2, 0, 'Starfish').setOrigin(0.5, 0);
+        this.filled = [false, false, false, false, false];
 
-        //this.following = this.add.sprite(game.config.width/2, game.config.height, 'Starfish').setOrigin(0.5, 0.5);
-        //this.following.bounce = 0;
+        this.following = this.add.sprite(game.config.width/2, game.config.height, 'Starfish').setOrigin(0.5, 0.5);
+        this.following.bounce = 0;
+        this.following.visible = false;
 
         this.inRoom = this.add.sprite(game.config.width/2, game.config.height, 'Starfish').setOrigin(0.5, 0.5);
         this.inRoom.bounce = 0;
         //this.inRoom.visible = false;
 
         this.dropOff = this.add.sprite(game.config.width/2, 0, 'StarLoc').setOrigin(0.5, 0);
+        this.filledStar = this.add.sprite(game.config.width/2, 0, 'Starfish').setOrigin(0.5, 0);
 
         this.pickRoom(this.currLoc);
 
@@ -371,27 +372,53 @@ class Play extends Phaser.Scene {
         case "RedStart":
           this.inRoom.visible = true;
           this.inRoom.setTint(0xDB4C40);
+          if (this.following.tintTopLeft == 0xffffff && !this.filled[0]){
+            this.following.visible = true;
+            this.following.setTint(0xDB4C40);
+          }
           break;
         case "BlueStart":
           this.inRoom.visible = true;
           this.inRoom.setTint(0x90BEDE);
+          if (this.following.tintTopLeft == 0xffffff && !this.filled[1]){
+            this.following.visible = true;
+            this.following.setTint(0x90BEDE);
+          }
           break;
         case "GreenStart":
           this.inRoom.visible = true;
           this.inRoom.setTint(0x143109);
+          console.log(this.following.tintTopLeft);
+          if (this.following.tintTopLeft == 0xffffff && !this.filled[2]){
+            this.following.visible = true;
+            this.following.setTint(0x143109);
+          }
           break;
         case "YellowStart":
           this.inRoom.visible = true;
           this.inRoom.setTint(0xF0EC57);
+          if (this.following.tintTopLeft == 0xffffff && !this.filled[3]){
+            this.following.visible = true;
+            this.following.setTint(0xF0EC57);
+          }
           break;
         case "PurpleStart":
           this.inRoom.visible = true;
           this.inRoom.setTint(0x77567A);
+          if (this.following.tintTopLeft == 0xffffff && !this.filled[4] ){
+            this.following.visible = true;
+            this.following.setTint(0x77567A);
+          }
           break;
         case "RedEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0xDB4C40);
-          if (this.filledStar[0]){
+          if (this.following.tintTopLeft == 0xDB4C40){
+            this.following.visible = false;
+            this.filled[0] = true;
+            this.following.clearTint();
+          }
+          if (this.filled[0]){
             this.filledStar.visible = true;
             this.filledStar.setTint(0xDB4C40);
           }
@@ -399,6 +426,11 @@ class Play extends Phaser.Scene {
         case "BlueEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0x90BEDE);
+          if (this.following.tintTopLeft == 0x90BEDE){
+            this.following.visible = false;
+            this.filled[1] = true;
+            this.following.clearTint();
+          }
           if (this.filled[1]){
             this.filledStar.visible = true;
             this.filledStar.setTint(0x90BEDE);
@@ -407,6 +439,11 @@ class Play extends Phaser.Scene {
         case "GreenEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0x143109);
+          if (this.following.tintTopLeft == 0x143109){
+            this.following.visible = false;
+            this.filled[2] = true;
+            this.following.clearTint();
+          }
           if (this.filled[2]){
             this.filledStar.visible = true;
             this.filledStar.setTint(0x143109);
@@ -415,6 +452,11 @@ class Play extends Phaser.Scene {
         case "YellowEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0xF0EC57);
+          if (this.following.tintTopLeft == 0xF0EC57){
+            this.following.visible = false;
+            this.filled[3] = true;
+            this.following.clearTint();
+          }
           if (this.filled[3]){
             this.filledStar.visible = true;
             this.filledStar.setTint(0xF0EC57);
@@ -423,6 +465,11 @@ class Play extends Phaser.Scene {
         case "PurpleEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0x77567A);
+          if (this.following.tintTopLeft == 0x77567A){
+            this.following.visible = false;
+            this.filled[4] = true;
+            this.following.clearTint();
+          }
           if (this.filled[4]){
             this.filledStar.visible = true;
             this.filledStar.setTint(0x77567A);
