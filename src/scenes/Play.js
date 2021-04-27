@@ -26,25 +26,28 @@ class Play extends Phaser.Scene {
 
         this.background = this.add.sprite(game.config.width/2, game.config.height/2, 'Rooms').setOrigin(0.5, 0.5);
 
+        // Red, Blue, Green, Yellow, Purple
+        this.filled = [false, false, false, false, false];
+
+        this.following = this.add.sprite(game.config.width/2, game.config.height, 'Starfish').setOrigin(0.5, 0);
+        this.following.bounce = 0;
+        this.following.visible = false;
+        this.followingBool = false;
+
+       
+        //this.inRoom.visible = false;
+
+        this.dropOff = this.add.sprite(game.config.width/2, 0, 'StarLoc').setOrigin(0.5, 0);
+        this.filledStar = this.add.sprite(game.config.width/2, 0, 'Starfish').setOrigin(0.5, 0);
+
         this.Brody = new Brody(this, game.config.width/2, game.config.height * 1.15, 'Brody').setOrigin(this.spawnPoint, 1.1);
         //this.sound.play('BrodyQuest');
 
         this.verticalBounds = [1, 1, 1];
         this.horizontalBounds = [this.Brody.width * 0.6, game.config.width - this.Brody.width * 0.6]
 
-        // Red, Blue, Green, Yellow, Purple
-        this.filled = [false, false, false, false, false];
-
-        this.following = this.add.sprite(game.config.width/2, game.config.height, 'Starfish').setOrigin(0.5, 0.5);
-        this.following.bounce = 0;
-        this.following.visible = false;
-
         this.inRoom = this.add.sprite(game.config.width/2, game.config.height, 'Starfish').setOrigin(0.5, 0.5);
         this.inRoom.bounce = 0;
-        //this.inRoom.visible = false;
-
-        this.dropOff = this.add.sprite(game.config.width/2, 0, 'StarLoc').setOrigin(0.5, 0);
-        this.filledStar = this.add.sprite(game.config.width/2, 0, 'Starfish').setOrigin(0.5, 0);
 
         this.pickRoom(this.currLoc);
 
@@ -58,17 +61,12 @@ class Play extends Phaser.Scene {
 
     update(time, delta) {
       this.Brody.update(time, delta);
-      if (this.following){
+      if (this.followingBool){
         this.orbit(this.following);
       }
 
       if (this.inRoom.visible){
         this.bounce(this.inRoom);
-      }
-
-      if (Phaser.Input.Keyboard.JustDown(keySPACE)){
-        console.log("Brody's X: " + this.Brody.x + "   CurrScale: " + this.currScale + "   ScaleBounds: " + this.verticalBounds);
-
       }
 
       if (this.currScale < 1){
@@ -374,6 +372,7 @@ class Play extends Phaser.Scene {
           this.inRoom.setTint(0xDB4C40);
           if (this.following.tintTopLeft == 0xffffff && !this.filled[0]){
             this.following.visible = true;
+            this.followingBool = true;
             this.following.setTint(0xDB4C40);
           }
           break;
@@ -382,6 +381,7 @@ class Play extends Phaser.Scene {
           this.inRoom.setTint(0x90BEDE);
           if (this.following.tintTopLeft == 0xffffff && !this.filled[1]){
             this.following.visible = true;
+            this.followingBool = true;
             this.following.setTint(0x90BEDE);
           }
           break;
@@ -391,6 +391,7 @@ class Play extends Phaser.Scene {
           console.log(this.following.tintTopLeft);
           if (this.following.tintTopLeft == 0xffffff && !this.filled[2]){
             this.following.visible = true;
+            this.followingBool = true;
             this.following.setTint(0x143109);
           }
           break;
@@ -399,6 +400,7 @@ class Play extends Phaser.Scene {
           this.inRoom.setTint(0xF0EC57);
           if (this.following.tintTopLeft == 0xffffff && !this.filled[3]){
             this.following.visible = true;
+            this.followingBool = true;
             this.following.setTint(0xF0EC57);
           }
           break;
@@ -407,73 +409,77 @@ class Play extends Phaser.Scene {
           this.inRoom.setTint(0x77567A);
           if (this.following.tintTopLeft == 0xffffff && !this.filled[4] ){
             this.following.visible = true;
+            this.followingBool = true;
             this.following.setTint(0x77567A);
           }
           break;
         case "RedEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0xDB4C40);
-          if (this.following.tintTopLeft == 0xDB4C40){
-            this.following.visible = false;
-            this.filled[0] = true;
-            this.following.clearTint();
-          }
           if (this.filled[0]){
             this.filledStar.visible = true;
+            this.filledStar.setTint(0xDB4C40);
+          }
+          if (this.following.tintTopLeft == 0xDB4C40){
+            this.filled[0] = true;
+            this.fillRoom();
             this.filledStar.setTint(0xDB4C40);
           }
           break;
         case "BlueEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0x90BEDE);
-          if (this.following.tintTopLeft == 0x90BEDE){
-            this.following.visible = false;
-            this.filled[1] = true;
-            this.following.clearTint();
-          }
           if (this.filled[1]){
             this.filledStar.visible = true;
+            this.filledStar.setTint(0x90BEDE);
+          }
+          if (this.following.tintTopLeft == 0x90BEDE){
+            this.filled[1] = true;
+            this.fillRoom();
             this.filledStar.setTint(0x90BEDE);
           }
           break;
         case "GreenEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0x143109);
-          if (this.following.tintTopLeft == 0x143109){
-            this.following.visible = false;
-            this.filled[2] = true;
-            this.following.clearTint();
-          }
           if (this.filled[2]){
             this.filledStar.visible = true;
             this.filledStar.setTint(0x143109);
           }
+          if (this.following.tintTopLeft == 0x143109){
+            this.filled[2] = true;
+            this.fillRoom();
+            this.filledStar.setTint(0x143109);
+          }
+          
           break;
         case "YellowEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0xF0EC57);
-          if (this.following.tintTopLeft == 0xF0EC57){
-            this.following.visible = false;
-            this.filled[3] = true;
-            this.following.clearTint();
-          }
           if (this.filled[3]){
             this.filledStar.visible = true;
             this.filledStar.setTint(0xF0EC57);
           }
+          if (this.following.tintTopLeft == 0xF0EC57){
+            this.filled[3] = true;
+            this.fillRoom();
+            this.filledStar.setTint(0xF0EC57);
+          }
+          
           break;
         case "PurpleEnd":
           this.dropOff.visible = true;
           this.dropOff.setTint(0x77567A);
-          if (this.following.tintTopLeft == 0x77567A){
-            this.following.visible = false;
-            this.filled[4] = true;
-            this.following.clearTint();
-          }
           if (this.filled[4]){
             this.filledStar.visible = true;
             this.filledStar.setTint(0x77567A);
           }
+          if (this.following.tintTopLeft == 0x77567A){
+            this.filled[4] = true;
+            this.fillRoom();
+            this.filledStar.setTint(0x77567A);
+          }
+          
           break;
       }
     }
@@ -541,5 +547,27 @@ class Play extends Phaser.Scene {
       sprite.y = game.config.height * 0.8 + (game.config.height*0.3 * Math.sin(sprite.bounce));
       sprite.bounce += 0.04;
       sprite.angle += 2;
+    }
+
+    fillRoom(){
+      let myTarget = this.following;
+      let myRoomStar = this.filledStar;
+      this.following.angle = 0;
+      this.following.x = game.config.width/2;
+      this.following.y = game.config.height/2;
+      let myTween = this.tweens.add({
+        targets: this.following,
+        x: this.filledStar.x,
+        y: this.filledStar.y,
+        duration: 3000,
+        ease: 'Linear',
+        delay: 1000,
+        onComplete: function () {
+          myTarget.visible = false;
+          myTarget.clearTint();
+          myRoomStar.visible = true;
+        }
+      });
+      this.followingBool = false;
     }
 }

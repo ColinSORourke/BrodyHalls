@@ -109,9 +109,10 @@ class Menu extends Phaser.Scene {
         // this.generateData();
         if (this.displaySeed.text != 'No Seed Yet'){
             let seed = this.displaySeed.text;
+            game.Seed = seed;
             game.Maze = new Maze(seed);
             console.log(game.Maze.data);
-            this.scene.start('debugScene');
+            this.scene.start('playScene');
         }
     }
 

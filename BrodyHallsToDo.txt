@@ -6,6 +6,6 @@
 * Dynamic Soundtrack
     * Add sound Toggle
 * Improve Menu Screen
-    * Seed display becomes a text field
+    * Seed display becomes a text field - DONE
 * Thoroughly comment all files
 * Clean up some messier code
