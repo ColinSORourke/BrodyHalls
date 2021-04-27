@@ -22,7 +22,7 @@ Thus, the playable frontend of the maze has that same cutout of Adrien Brody nav
     The Brodyquest song is also used as the soundtrack here, albeit cut into smaller chunks that dynamically progress as the players solves parts of the maze.
     This Playable Frontend is almost entirely contained in Play.js - if I were to work on this project any more, my next step would be to clean out Play.js and separate it into more appropriate smaller files.
 
-Note: Brodyhalls was largely tested in the Google Chrome browser. It should work in others, but I have yet to a thorough investigation.
+Note: Brodyhalls was largely tested in the Google Chrome browser on a laptop device. It should work in other browsers, but I have yet to a thorough investigation. This will not work on Mobile as of now.
 
 So what to make of this? This was a technical exercise, I did very little designing and the goal is not to show off my design skills.
 The extent of my design consisted of minor choices in Maze Generation, and the initial choice to mashup Mr. Cicierega's absurd music with the disorienting Endless Halls, a joke for which the target audience is: ME.
