@@ -57,7 +57,7 @@ class Menu extends Phaser.Scene {
 
         this.add.text(game.config.width/2 + 256,  game.config.height/2 - borderUISize - borderPadding + 64, 'Or type one with numbers \n (delete to erase)').setOrigin(0.5);
         
-        let playButton = this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Click to start if you have a seed', menuConfig).setOrigin(0.5);
+        let playButton = this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Click to start if you have a 2+ Digit seed', menuConfig).setOrigin(0.5);
         playButton.setInteractive();
         playButton.on('pointerdown', () => {this.startPlayScene()})
 
@@ -120,7 +120,7 @@ class Menu extends Phaser.Scene {
 
     startDebugScene(){
         // this.generateData();
-        if (this.displaySeed.text != 'No Seed Yet'){
+        if (this.displaySeed.text != 'No Seed Yet' && this.displaySeed.text.length >= 2){
             let seed = this.displaySeed.text;
             game.Seed = seed;
             game.Maze = new Maze(seed);
@@ -131,7 +131,7 @@ class Menu extends Phaser.Scene {
 
     startPlayScene(){
         // this.generateData();
-        if (this.displaySeed.text != 'No Seed Yet'){
+        if (this.displaySeed.text != 'No Seed Yet' && this.displaySeed.text.length >= 2){
             let seed = this.displaySeed.text;
             game.Seed = seed;
             game.Maze = new Maze(seed);

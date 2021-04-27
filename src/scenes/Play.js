@@ -6,6 +6,7 @@ class Play extends Phaser.Scene {
     preload() {
         this.load.image('Brody', './assets/transcoder.png');
         this.load.spritesheet('Rooms', './assets/RoomSheet.png', {frameWidth: 1000, frameHeight: 750});
+        
         this.load.audio('BrodyQuest', './assets/BrodyQuestOriginal.mp3');
 
         this.load.image('crossroads', './assets/Crossroads.png');
@@ -32,6 +33,22 @@ class Play extends Phaser.Scene {
           },
           fixedWidth: 0
         }
+
+        this.music = this.sound.add('BrodyQuest');
+        this.musicConfig =  {
+          mute: false,
+          volume: 0.75,
+          rate: 1,
+          detune: 0,
+          seek: 0,
+          loop: false,
+          delay: 0
+        };
+        this.queuedTransition = ['veryStart'];
+        this.currLoop = 'pianoLoop';
+        this.markBQ();
+        this.score = 0;
+        audioController(this, this.music);
 
         this.currLoc = game.Maze.start;
         console.log(this.currLoc);
@@ -81,6 +98,8 @@ class Play extends Phaser.Scene {
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+        keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     }
 
     update(time, delta) {
@@ -93,8 +112,6 @@ class Play extends Phaser.Scene {
           this.spaceBackground.visible = true;
 
           this.clock = this.time.delayedCall(5000, () => {
-            this.add.text(game.config.width/2, game.config.height/4, 'BRODYHALLS COMPLETE', this.textConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/4 + 64, 'Hold Space to Return to Menu', this.textConfig).setOrigin(0.5);
             //this.background.y = game.config.height * 2;
             this.tweens.add({
               targets: this.background,
@@ -123,6 +140,15 @@ class Play extends Phaser.Scene {
         if (this.spaceSpeed <= 20){
           this.spaceSpeed += 0.02;
         }
+      }
+
+      if (Phaser.Input.Keyboard.JustDown(keyM) ){
+        this.music.mute = !this.music.mute;
+      }
+      if (Phaser.Input.Keyboard.JustDown(keyX) && this.followingBool){
+        this.followingBool = false;
+        this.following.visible = false;
+        this.following.clearTint();
       }
 
       if (Phaser.Input.Keyboard.JustDown(keySPACE)){
@@ -644,5 +670,61 @@ class Play extends Phaser.Scene {
         }
       });
       this.followingBool = false;
+      this.score += 1;
+      switch (this.score) {
+        case 1:
+          this.queuedTransition.push("chorusLoop");
+          this.currLoop = 'chorusLoop';
+          break;
+        case 2:
+          this.queuedTransition.push("technoLoop");
+          this.currLoop = 'technoLoop';
+          break;
+        case 3:
+          this.queuedTransition.push("guitarLoop");
+          this.currLoop = 'guitarLoop';
+          break;
+        case 4:
+          this.queuedTransition.push("guitarTrans");
+          this.queuedTransition.push("brodyLoop");
+          this.currLoop = "brodyLoop";
+          break;
+        case 5:
+          this.queuedTransition.push("finale");
+          this.currLoop = false;
+          break;
+      }
     }
+
+    markBQ(){
+      this.music.addMarker({name: "veryStart", start: 0, duration: 20.426, config: this.musicConfig});
+      this.music.addMarker({name: "pianoLoop", start: 20.426, duration: 40.851, config: this.musicConfig});
+      this.music.addMarker({name: "chorusLoop", start: 61.277, duration: 40.851, config: this.musicConfig});
+      this.music.addMarker({name: "technoLoop", start: 102.128, duration: 20.425, config: this.musicConfig});
+      this.music.addMarker({name: "guitarLoop", start: 122.553, duration: 30.638, config: this.musicConfig});
+      this.music.addMarker({name: "guitarTrans", start: 153.191, duration: 20.425, config: this.musicConfig});
+      this.music.addMarker({name: "brodyLoop", start: 173.617, duration: 10.213, config: this.musicConfig});
+      this.music.addMarker({name: "finale", start: 183.830, duration: 55, config: this.musicConfig});
+      this.currLoop = "pianoLoop";
+    }
+
+    gameEnd(){
+      this.add.text(game.config.width/2, game.config.height/4, 'Congratulations on completing BrodyHalls!', this.textConfig).setOrigin(0.5);
+      this.add.text(game.config.width/2, game.config.height/4 + 64, 'Hold Space to Return to Menu', this.textConfig).setOrigin(0.5);
+    }
+}
+
+function audioController(scene, music){
+  if (scene.queuedTransition.length > 0){
+    if ( scene.queuedTransition[0] == "finale"){
+        music.play(scene.queuedTransition.shift());
+        music.once('complete', function(){ scene.gameEnd()});
+    } else{
+        music.play(scene.queuedTransition.shift());
+        music.once('complete', function(){ audioController(scene, music) });
+    }
+  } else if (scene.currLoop){
+      music.play(scene.currLoop);
+      music.once('complete', function(){ audioController(scene, music) }); 
+  }
 }
