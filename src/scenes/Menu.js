@@ -12,10 +12,10 @@ class Menu extends Phaser.Scene {
     
         let menuConfig = {
             fontFamily: 'Courier',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
-            alighn: 'right',
+            fontSize: '56px',
+            backgroundColor: '#998888',
+            color: '#690375',
+            align: 'right',
             padding: {
                 top: 5,
                 bottom: 5
@@ -23,8 +23,15 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
 
+        /* backgroundColor: '#F3B141',
+            color: '#843605', */
+
+        this.title = this.add.text(game.config.width/2, game.config.height/2 - borderUISize*3 - borderPadding*3, 'BrodyHalls', menuConfig).setOrigin(0.5);
+
+        menuConfig.fontSize = '28px';
+
         // CREATE MENU... JESUS WEPT        
-        this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, '2455590', menuConfig).setOrigin(0.5);
+        this.displaySeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'No Seed Yet', menuConfig).setOrigin(0.5);
         // 16726498
         // 32957304
         this.currSeed = "";
@@ -41,20 +48,22 @@ class Menu extends Phaser.Scene {
         key9 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NINE);
         keyDEL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
 
+        menuConfig.backgroundColor = '#00FF00';
+        menuConfig.color = '#000';
+
         let genSeed = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding + 64, 'Generate Seed', menuConfig).setOrigin(0.5);
         genSeed.setInteractive();
         genSeed.on('pointerdown', () => {this.generateSeed()});
 
-
-        menuConfig.backgroundColor = '#00FF00';
-        menuConfig.color = '#000';
-        let debugButton = this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Click to view Debug Map (cheating)', menuConfig).setOrigin(0.5);
-        debugButton.setInteractive();
-        debugButton.on('pointerdown', () => {this.startDebugScene()})
-
-        let playButton = this.add.text(game.config.width/2, game.config.height/2 + (borderUISize + borderPadding)*2, 'Click to start if you have a seed', menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2 + 256,  game.config.height/2 - borderUISize - borderPadding + 64, 'Or type one with numbers \n (delete to erase)').setOrigin(0.5);
+        
+        let playButton = this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Click to start if you have a seed', menuConfig).setOrigin(0.5);
         playButton.setInteractive();
         playButton.on('pointerdown', () => {this.startPlayScene()})
+
+        let debugButton = this.add.text(game.config.width/2, game.config.height/2 + (borderUISize + borderPadding)*2, 'Click to view Debug Map (cheating)', menuConfig).setOrigin(0.5);
+        debugButton.setInteractive();
+        debugButton.on('pointerdown', () => {this.startDebugScene()})
 
         // define keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);

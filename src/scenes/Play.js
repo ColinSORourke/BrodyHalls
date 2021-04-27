@@ -20,6 +20,19 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        this.textConfig = {
+          fontFamily: 'Courier',
+          fontSize: '28px',
+          backgroundColor: '#998888',
+          color: '#690375',
+          align: 'right',
+          padding: {
+            top: 5,
+            bottom: 5
+          },
+          fixedWidth: 0
+        }
+
         this.currLoc = game.Maze.start;
         console.log(this.currLoc);
         this.viablePaths = game.Maze.dict[this.currLoc][1];
@@ -59,7 +72,7 @@ class Play extends Phaser.Scene {
         this.pickRoom(this.currLoc);
 
         this.returnTimer = 0;
-        this.returnText = this.add.text(game.config.width/2, game.config.height/2, 'Keep holding to return to Menu').setOrigin(0.5);
+        this.returnText = this.add.text(game.config.width/2, game.config.height/2, 'Keep holding to return to Menu', this.textConfig).setOrigin(0.5);
         this.returnText.visible = false;
 
         
@@ -71,7 +84,7 @@ class Play extends Phaser.Scene {
     }
 
     update(time, delta) {
-      if (this.filled[0] && this.filled[1] && this.filled[2] && this.filled[3] && this.filled[4]){
+      if (this.filled[0] && this.filled[1] && this.filled[2] && this.filled[3] && this.filled[4] && !this.gameWon){
           this.gameWon = true;
           this.verticalBounds = [1, 1, 1];
           this.horizontalBounds = [this.Brody.width * 0.6, game.config.width - this.Brody.width * 0.6]
@@ -80,8 +93,8 @@ class Play extends Phaser.Scene {
           this.spaceBackground.visible = true;
 
           this.clock = this.time.delayedCall(5000, () => {
-            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER').setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Hold Space to Return to Menu').setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/4, 'BRODYHALLS COMPLETE', this.textConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/4 + 64, 'Hold Space to Return to Menu', this.textConfig).setOrigin(0.5);
             //this.background.y = game.config.height * 2;
             this.tweens.add({
               targets: this.background,
