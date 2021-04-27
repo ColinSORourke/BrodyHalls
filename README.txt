@@ -1,6 +1,6 @@
 Hi! This is the README file for Colin O'Rourke's BrodyHalls.
 
-What is BrodyHalls? BrodyHalls is a game developed by Colin O'Rourke by spoofing two existing things Coliin was a fan of.
+What is BrodyHalls? BrodyHalls is a game developed using Phaser by Colin O'Rourke, spoofing two existing things Colin was a fan of.
 
 Firstly, BrodyHalls is a recreation of the Endless Halls puzzle from World of Warcraft - as described here: https://worldofwarcraft.com/en-us/news/21115833/riddle-me-this-decrypting-the-lucid-nightmare 
 My goal was to recreate the puzzle as accurately as possible as a technical exercise. 
@@ -21,6 +21,8 @@ Thus, the playable frontend of the maze has that same cutout of Adrien Brody nav
             B) That creates significant difficulty to also convey the possible directions Brody can&can't move in.
     The Brodyquest song is also used as the soundtrack here, albeit cut into smaller chunks that dynamically progress as the players solves parts of the maze.
     This Playable Frontend is almost entirely contained in Play.js - if I were to work on this project any more, my next step would be to clean out Play.js and separate it into more appropriate smaller files.
+
+Note: Brodyhalls was largely tested in the Google Chrome browser. It should work in others, but I have yet to a thorough investigation.
 
 So what to make of this? This was a technical exercise, I did very little designing and the goal is not to show off my design skills.
 The extent of my design consisted of minor choices in Maze Generation, and the initial choice to mashup Mr. Cicierega's absurd music with the disorienting Endless Halls, a joke for which the target audience is: ME.
