@@ -15,6 +15,8 @@ class Play extends Phaser.Scene {
         this.load.image('trap', './assets/TrapRoom.png');
         this.load.image('Starfish', './assets/Starfish.png');
         this.load.image('StarLoc', './assets/StarLoc.png');
+
+        this.load.image('Space', './assets/space-safari-background.png');
     }
 
     create() {
@@ -24,7 +26,12 @@ class Play extends Phaser.Scene {
         this.spawnPoint = 0.5
         this.currScale = 1;
 
+        this.spaceBackground = this.add.tileSprite(0, 0, 1440, 2880, 'Space').setOrigin(0, 0);
+        this.spaceSpeed = 4;
+        this.spaceBackground.visible = false;
         this.background = this.add.sprite(game.config.width/2, game.config.height/2, 'Rooms').setOrigin(0.5, 0.5);
+
+        this.gameWon = false;
 
         // Red, Blue, Green, Yellow, Purple
         this.filled = [false, false, false, false, false];
@@ -51,6 +58,10 @@ class Play extends Phaser.Scene {
 
         this.pickRoom(this.currLoc);
 
+        this.returnTimer = 0;
+        this.returnText = this.add.text(game.config.width/2, game.config.height/2, 'Keep holding to return to Menu').setOrigin(0.5);
+        this.returnText.visible = false;
+
         
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -60,6 +71,61 @@ class Play extends Phaser.Scene {
     }
 
     update(time, delta) {
+      if (this.filled[0] && this.filled[1] && this.filled[2] && this.filled[3] && this.filled[4]){
+          this.gameWon = true;
+          this.verticalBounds = [1, 1, 1];
+          this.horizontalBounds = [this.Brody.width * 0.6, game.config.width - this.Brody.width * 0.6]
+          this.viablePaths = [false, false, false, false];
+
+          this.spaceBackground.visible = true;
+
+          this.clock = this.time.delayedCall(5000, () => {
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER').setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Hold Space to Return to Menu').setOrigin(0.5);
+            //this.background.y = game.config.height * 2;
+            this.tweens.add({
+              targets: this.background,
+              y: game.config.height * 2,
+              duration: 3000,
+              ease: 'Expo'
+            })
+            this.tweens.add({
+              targets: this.dropOff,
+              y: game.config.height,
+              duration: 3000,
+              ease: 'Expo',
+            });
+            this.tweens.add({
+              targets: this.filledStar,
+              y: game.config.height,
+              duration: 3000,
+              ease: 'Expo',
+            });
+            this.Brody.clearTint();
+          }, null, this);
+      }
+
+      if (this.gameWon){
+        this.spaceBackground.tilePositionY -= this.spaceSpeed;
+        if (this.spaceSpeed <= 20){
+          this.spaceSpeed += 0.02;
+        }
+      }
+
+      if (Phaser.Input.Keyboard.JustDown(keySPACE)){
+        this.returnText.visible = true;
+      }
+      if (Phaser.Input.Keyboard.JustUp(keySPACE)){
+        this.returnText.visible = false;
+      }
+
+      if (keySPACE.isDown ){
+        this.returnTimer += delta;
+        if (this.returnTimer >= 3000){
+          this.scene.start('menuScene');
+        }
+      }
+
       this.Brody.update(time, delta);
       if (this.followingBool){
         this.orbit(this.following);
@@ -111,36 +177,37 @@ class Play extends Phaser.Scene {
           this.Brody.y += 1.5 * this.Brody.moveSpeed;
         }
       }
-
-      if (this.Brody.x <= (-this.Brody.width/2)){
-        this.currLoc = game.Maze.dict[this.currLoc][0][3];
-        console.log(this.currLoc);
-        this.pickRoom(this.currLoc, 2);
-        this.Brody.x = game.config.width;
-      }
-      if (this.Brody.x >= (game.config.width + this.Brody.width/2)){
-        this.currLoc = game.Maze.dict[this.currLoc][0][2];
-        console.log(this.currLoc);
-        this.pickRoom(this.currLoc, 3);
-        this.Brody.x = 0;
-      }
-      if (this.Brody.y >= (game.config.height * 1.15 + this.Brody.height)){
-        let weirdEnd = ( game.Maze.dict[this.currLoc][1][0] && !this.viablePaths[0] )
-        this.currLoc = game.Maze.dict[this.currLoc][0][1];
-        console.log(this.currLoc);
-        if (weirdEnd) {
-          this.pickRoom(this.currLoc, 1);
-        } else {
-          this.pickRoom(this.currLoc, 0);
+      if (!this.gameWon){
+        if (this.Brody.x <= (-this.Brody.width/2)){
+          this.currLoc = game.Maze.dict[this.currLoc][0][3];
+          console.log(this.currLoc);
+          this.pickRoom(this.currLoc, 2);
+          this.Brody.x = game.config.width;
         }
-        
-        this.Brody.y = game.config.height * 1.15;
-      }
-      if (this.currScale >= this.verticalBounds[2]){
-        this.currLoc = game.Maze.dict[this.currLoc][0][0];
-        console.log(this.currLoc);
-        this.pickRoom(this.currLoc, 1);
-        this.Brody.y = game.config.height * 1.15;
+        if (this.Brody.x >= (game.config.width + this.Brody.width/2)){
+          this.currLoc = game.Maze.dict[this.currLoc][0][2];
+          console.log(this.currLoc);
+          this.pickRoom(this.currLoc, 3);
+          this.Brody.x = 0;
+        }
+        if (this.Brody.y >= (game.config.height * 1.15 + this.Brody.height)){
+          let weirdEnd = ( game.Maze.dict[this.currLoc][1][0] && !this.viablePaths[0] )
+          this.currLoc = game.Maze.dict[this.currLoc][0][1];
+          console.log(this.currLoc);
+          if (weirdEnd) {
+            this.pickRoom(this.currLoc, 1);
+          } else {
+            this.pickRoom(this.currLoc, 0);
+          }
+          
+          this.Brody.y = game.config.height * 1.15;
+        }
+        if (this.currScale >= this.verticalBounds[2]){
+          this.currLoc = game.Maze.dict[this.currLoc][0][0];
+          console.log(this.currLoc);
+          this.pickRoom(this.currLoc, 1);
+          this.Brody.y = game.config.height * 1.15;
+        }
       }
     }
 
@@ -493,8 +560,7 @@ class Play extends Phaser.Scene {
       }
 
       if (numPath == 4){
-        let spot = this.add.sprite(32, 32, 'line').setOrigin(0.5,0.5);
-        spot.setScale(0.5);
+        let spot = this.add.sprite(64, 64, 'line').setOrigin(0.5,0.5);
         if (direction == 2 || direction == 3){
           spot.angle = 90;
         }
@@ -502,27 +568,23 @@ class Play extends Phaser.Scene {
       if (numPath == 3){
           let first = paths.indexOf(false);
           let rotation = [90, 270, 180, 0];
-          let spot = this.add.sprite(32, 32, 'crossroads').setOrigin(0.5,0.5);
-          spot.setScale(0.5);
+          let spot = this.add.sprite(64, 64, 'crossroads').setOrigin(0.5,0.5);
           spot.angle = rotation[first];
       }
       if (numPath == 1){
           let rotation = [0, 180, 90, 270];
-          let spot = this.add.sprite(32, 32, 'deadend').setOrigin(0.5,0.5);
-          spot.setScale(0.5);
+          let spot = this.add.sprite(64,64, 'deadend').setOrigin(0.5,0.5);
           spot.angle = rotation[direction];
       }
       if (numPath == 2){
           let first = paths.indexOf(true);
           if (paths[first+1] && first != 1){
-              let spot = this.add.sprite(32, 32, 'line').setOrigin(0.5,0.5);
-              spot.setScale(0.5);
+              let spot = this.add.sprite(64, 64, 'line').setOrigin(0.5,0.5);
               if (first == 2){
                   spot.angle = 90;
               }
           } else {
-              let spot = this.add.sprite(32, 32, 'curvey').setOrigin(0.5,0.5);
-              spot.setScale(0.5);
+              let spot = this.add.sprite(64, 64, 'curvey').setOrigin(0.5,0.5);
               if (paths[1] && paths[2]){
                   spot.angle = 90;
               }
@@ -560,7 +622,7 @@ class Play extends Phaser.Scene {
         x: this.filledStar.x,
         y: this.filledStar.y,
         duration: 3000,
-        ease: 'Linear',
+        ease: 'Expo',
         delay: 1000,
         onComplete: function () {
           myTarget.visible = false;

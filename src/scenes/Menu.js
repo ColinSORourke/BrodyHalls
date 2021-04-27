@@ -48,9 +48,13 @@ class Menu extends Phaser.Scene {
 
         menuConfig.backgroundColor = '#00FF00';
         menuConfig.color = '#000';
-        let debugButton = this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Click to start if you have a seed', menuConfig).setOrigin(0.5);
+        let debugButton = this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Click to view Debug Map (cheating)', menuConfig).setOrigin(0.5);
         debugButton.setInteractive();
         debugButton.on('pointerdown', () => {this.startDebugScene()})
+
+        let playButton = this.add.text(game.config.width/2, game.config.height/2 + (borderUISize + borderPadding)*2, 'Click to start if you have a seed', menuConfig).setOrigin(0.5);
+        playButton.setInteractive();
+        playButton.on('pointerdown', () => {this.startPlayScene()})
 
         // define keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -106,6 +110,17 @@ class Menu extends Phaser.Scene {
     }  
 
     startDebugScene(){
+        // this.generateData();
+        if (this.displaySeed.text != 'No Seed Yet'){
+            let seed = this.displaySeed.text;
+            game.Seed = seed;
+            game.Maze = new Maze(seed);
+            console.log(game.Maze.data);
+            this.scene.start('debugScene');
+        }
+    }
+
+    startPlayScene(){
         // this.generateData();
         if (this.displaySeed.text != 'No Seed Yet'){
             let seed = this.displaySeed.text;

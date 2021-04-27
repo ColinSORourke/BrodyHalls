@@ -120,6 +120,28 @@ class Debug extends Phaser.Scene {
 
             }
         }
+
+        this.returnTimer = 0;
+        this.returnText = this.add.text(game.config.width/2, game.config.height/2, 'Keep holding to return to Menu').setOrigin(0.5);
+        this.returnText.visible = false;
+
+        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    }
+
+    update(time, delta){
+        if (Phaser.Input.Keyboard.JustDown(keySPACE)){
+            this.returnText.visible = true;
+          }
+          if (Phaser.Input.Keyboard.JustUp(keySPACE)){
+            this.returnText.visible = false;
+          }
+    
+          if (keySPACE.isDown ){
+            this.returnTimer += delta;
+            if (this.returnTimer >= 3000){
+              this.scene.start('menuScene');
+            }
+          }
     }
 
 }
