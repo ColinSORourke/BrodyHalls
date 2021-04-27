@@ -1,11 +1,11 @@
 * Implement Objects in the rooms - DONE
-    * Orbs follow Brody akin to starfish - NEARLY DONE
+    * Orbs follow Brody akin to starfish - DONE
 * Implement Trap room - DONE
 * Implement South Dead End Shading - DONE
 * Improve Room Graphics
-* Dynamic Soundtrack
-    * Add sound Toggle
-* Improve Menu Screen
+* Dynamic Soundtrack - DONE
+    * Add sound Toggle - DONE
+* Improve Menu Screen - MOSTLY DONE
     * Seed display becomes a text field - DONE
 * Thoroughly comment all files
 * Clean up some messier code
