@@ -161,6 +161,7 @@ class Play extends Phaser.Scene {
       if (keySPACE.isDown ){
         this.returnTimer += delta;
         if (this.returnTimer >= 3000){
+          this.music.stop();
           this.scene.start('menuScene');
         }
       }
